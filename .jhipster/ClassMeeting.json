@@ -1,0 +1,55 @@
+{
+  "name": "ClassMeeting",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "2",
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "classType",
+      "fieldType": "ClassType",
+      "fieldValues": "NORMAL,SPECIAL",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "comment",
+      "otherEntityRelationshipName": "classMeeting",
+      "relationshipName": "comments"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "asistence",
+      "otherEntityRelationshipName": "classMeeting",
+      "relationshipName": "asistence"
+    }
+  ],
+  "changelogDate": "20200803220256",
+  "entityTableName": "class_meeting",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

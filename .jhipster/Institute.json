@@ -1,0 +1,60 @@
+{
+  "name": "Institute",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "2",
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "enabled",
+      "fieldType": "Boolean",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "extendedUser",
+      "otherEntityRelationshipName": "institute",
+      "relationshipName": "users"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "student",
+      "otherEntityRelationshipName": "institute",
+      "relationshipName": "students"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "group",
+      "otherEntityRelationshipName": "institute",
+      "relationshipName": "groups"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "asistence",
+      "otherEntityRelationshipName": "institute",
+      "relationshipName": "asistence"
+    }
+  ],
+  "changelogDate": "20200803215956",
+  "entityTableName": "institute",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

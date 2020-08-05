@@ -1,0 +1,97 @@
+{
+  "name": "Student",
+  "fields": [
+    {
+      "fieldName": "firstName",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "2",
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "2",
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "idNumber",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "6",
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "birthDate",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "enabled",
+      "fieldType": "Boolean",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "photoUrl",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "contact",
+      "otherEntityRelationshipName": "student",
+      "relationshipName": "contacts"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "document",
+      "otherEntityRelationshipName": "student",
+      "relationshipName": "documents"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "asistence",
+      "otherEntityRelationshipName": "student",
+      "relationshipName": "asistence"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "institute",
+      "otherEntityRelationshipName": "students",
+      "relationshipName": "institute",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "group",
+      "otherEntityRelationshipName": "students",
+      "relationshipName": "group",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20200803215756",
+  "entityTableName": "student",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

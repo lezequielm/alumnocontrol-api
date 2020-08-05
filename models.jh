@@ -1,0 +1,87 @@
+entity Student {
+	firstName String required minlength(2) maxlength(60)
+    lastName String required minlength(2) maxlength(60)
+    idNumber String minlength(6) maxlength(20)
+    birthDate ZonedDateTime
+    enabled Boolean required
+    photoUrl String
+}
+
+enum ContactType {
+	EMAIL, PHONE, MOBILE
+}
+
+entity Contact {
+	contactType ContactType required
+    data String required minlength(2) maxlength(60)
+    order Long required
+}
+
+entity Institute {
+	name String required minlength(2) maxlength(60)
+    enabled Boolean required
+}
+
+entity Group {
+	name String required minlength(2) maxlength(60)
+    enabled Boolean required
+}
+
+entity Asistence {
+	present Boolean required
+    delayed Boolean
+    justified Boolean
+    justification TextBlob
+}
+
+enum ClassType {
+	NORMAL, SPECIAL
+}
+
+entity ClassMeeting {
+	name String minlength(2) maxlength(60)
+    classType ClassType required
+    date ZonedDateTime required
+}
+
+entity Comment {
+	title String
+    text TextBlob
+}
+
+entity Document {
+	name String required
+    requestDate ZonedDateTime
+    uploadDate ZonedDateTime
+    fileUrl String required
+    sent Boolean required
+}
+
+entity ExtendedUser {
+	photoUrl String
+}
+
+relationship OneToMany {
+	Institute{users} to ExtendedUser
+	Institute{students} to Student{Institute}
+    Student{contacts} to Contact
+    Institute{groups} to Group{institute}
+ 	Group{requestedDocuments} to Document{Group}
+    Student{documents} to Document{student}
+    ClassMeeting{comments} to Comment
+    Group{students} to Student
+    Student to Asistence{student}
+    Institute to Asistence{institute}
+    ClassMeeting to Asistence{classMeeting}
+    Group to Asistence{group}
+    Group{users} to ExtendedUser{group}
+    ExtendedUser to Contact{user}
+}
+
+relationship OneToOne {
+	ExtendedUser{user} to User
+}
+
+
+paginate all with pagination
+service all with serviceImpl

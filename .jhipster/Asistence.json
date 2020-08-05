@@ -1,0 +1,66 @@
+{
+  "name": "Asistence",
+  "fields": [
+    {
+      "fieldName": "present",
+      "fieldType": "Boolean",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "delayed",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "justified",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "justification",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "student",
+      "otherEntityRelationshipName": "asistence",
+      "relationshipName": "student",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "institute",
+      "otherEntityRelationshipName": "asistence",
+      "relationshipName": "institute",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "classMeeting",
+      "otherEntityRelationshipName": "asistence",
+      "relationshipName": "classMeeting",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "group",
+      "otherEntityRelationshipName": "asistence",
+      "relationshipName": "group",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20200803220156",
+  "entityTableName": "asistence",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

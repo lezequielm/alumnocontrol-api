@@ -1,0 +1,11 @@
+id;present;jhi_delayed;justified;justification
+1;true;false;true;../fake-data/blob/hipster.txt
+2;false;false;true;../fake-data/blob/hipster.txt
+3;true;true;false;../fake-data/blob/hipster.txt
+4;false;true;true;../fake-data/blob/hipster.txt
+5;false;false;true;../fake-data/blob/hipster.txt
+6;true;false;true;../fake-data/blob/hipster.txt
+7;false;false;true;../fake-data/blob/hipster.txt
+8;true;false;false;../fake-data/blob/hipster.txt
+9;false;true;false;../fake-data/blob/hipster.txt
+10;false;false;false;../fake-data/blob/hipster.txt

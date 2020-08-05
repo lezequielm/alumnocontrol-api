@@ -1,0 +1,67 @@
+{
+  "name": "Group",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "minlength",
+        "maxlength"
+      ],
+      "fieldValidateRulesMinlength": "2",
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "enabled",
+      "fieldType": "Boolean",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "document",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "requestedDocuments"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "student",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "students"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "asistence",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "asistence"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "extendedUser",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "users"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "institute",
+      "otherEntityRelationshipName": "groups",
+      "relationshipName": "institute",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20200803220056",
+  "entityTableName": "group",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

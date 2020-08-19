@@ -48,6 +48,32 @@ public class CacheConfiguration {
             createCache(cm, com.softstonesolutions.alumnocontrol.domain.User.class.getName());
             createCache(cm, com.softstonesolutions.alumnocontrol.domain.Authority.class.getName());
             createCache(cm, com.softstonesolutions.alumnocontrol.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Student.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Student.class.getName() + ".contacts");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Student.class.getName() + ".documents");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Student.class.getName() + ".assistances");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Student.class.getName() + ".addresses");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Contact.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Address.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Institute.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Institute.class.getName() + ".users");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Institute.class.getName() + ".students");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Institute.class.getName() + ".groups");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Institute.class.getName() + ".assistances");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Group.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Group.class.getName() + ".requestedDocuments");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Group.class.getName() + ".students");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Group.class.getName() + ".assistances");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Group.class.getName() + ".users");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Assistance.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ClassMeeting.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ClassMeeting.class.getName() + ".comments");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ClassMeeting.class.getName() + ".assistances");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Comment.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.Document.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ExtendedUser.class.getName());
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ExtendedUser.class.getName() + ".contacts");
+            createCache(cm, com.softstonesolutions.alumnocontrol.domain.ExtendedUser.class.getName() + ".addresses");
             // jhipster-needle-ehcache-add-entry
         };
     }

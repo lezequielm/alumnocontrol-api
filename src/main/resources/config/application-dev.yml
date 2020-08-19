@@ -45,7 +45,7 @@ spring:
       auto-commit: false
   h2:
     console:
-      enabled: false
+      enabled: true
   jpa:
     database-platform: io.github.jhipster.domain.util.FixedH2Dialect
     show-sql: true
@@ -53,10 +53,18 @@ spring:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: c1870303.ferozo.com
+    port: 465
+    username: no-reply@softstonesolutions.com #Replace this field with your Gmail username.
+    password: qolyxT22Jj #Replace this field with your Gmail password/App password.
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      ssl.enable: true
+      ssl.trust: c1870303.ferozo.com
+    properties.mail.smtps:
+      auth: true
+
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
@@ -93,7 +101,9 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://127.0.0.1:8080
+    base-url: http://localhost:3000
+    from: no-reply@softstonesolutions.com
+
   metrics:
     logs: # Reports metrics in the logs
       enabled: false

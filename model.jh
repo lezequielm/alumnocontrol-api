@@ -84,7 +84,7 @@ relationship OneToMany {
     ClassMeeting to Assistance{classMeeting}
     Group to Assistance{group(name)}
     Group{users} to ExtendedUser{group(name)}
-    ExtendedUser to Contact{user(login)}
+    ExtendedUser to Contact{user}
     ExtendedUser{addresses} to Address{user}
     Student{addresses} to Address{student}
 }

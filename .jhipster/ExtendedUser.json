@@ -1,0 +1,56 @@
+{
+  "name": "ExtendedUser",
+  "fields": [
+    {
+      "fieldName": "photoUrl",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "extendedUser",
+      "relationshipName": "user",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "contact",
+      "otherEntityRelationshipName": "user",
+      "relationshipName": "contact"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "address",
+      "otherEntityRelationshipName": "user",
+      "relationshipName": "addresses"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "institute",
+      "otherEntityRelationshipName": "users",
+      "relationshipName": "institute",
+      "otherEntityField": "name"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "group",
+      "otherEntityRelationshipName": "users",
+      "relationshipName": "group",
+      "otherEntityField": "name"
+    }
+  ],
+  "changelogDate": "20200819220409",
+  "entityTableName": "extended_user",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

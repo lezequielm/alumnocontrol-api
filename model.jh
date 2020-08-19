@@ -1,0 +1,98 @@
+entity Student {
+	firstName String required minlength(2) maxlength(60)
+    lastName String required minlength(2) maxlength(60)
+    idNumber String minlength(6) maxlength(20)
+    birthDate ZonedDateTime
+    enabled Boolean required
+    photoUrl String
+}
+
+enum ContactType {
+	EMAIL, PHONE, MOBILE
+}
+
+entity Contact {
+	contactType ContactType required
+    data String required minlength(2) maxlength(60)
+    order Long required
+}
+
+entity Address {
+	street String required
+    number String required
+    flat Integer
+    department String
+    postalCode String
+    order Long required
+}
+
+entity Institute {
+	name String required minlength(2) maxlength(60)
+    enabled Boolean required
+}
+
+entity Group {
+	name String required minlength(2) maxlength(60)
+    enabled Boolean required
+}
+
+entity Assistance {
+	present Boolean required
+    delayed Boolean
+    justified Boolean
+    justification TextBlob
+}
+
+enum ClassType {
+	NORMAL, SPECIAL
+}
+
+entity ClassMeeting {
+	name String minlength(2) maxlength(60)
+    classType ClassType required
+    date ZonedDateTime required
+}
+
+entity Comment {
+	title String
+    text TextBlob
+}
+
+entity Document {
+	name String required
+    requestDate ZonedDateTime
+    uploadDate ZonedDateTime
+    fileUrl String required
+    sent Boolean required
+}
+
+entity ExtendedUser {
+	photoUrl String
+}
+
+relationship OneToMany {
+	Institute{users} to ExtendedUser{institute(name)}
+	Institute{students} to Student{Institute(name)}
+    Student{contacts} to Contact{student}
+    Institute{groups} to Group{institute(name)}
+ 	Group{requestedDocuments} to Document{Group(name)}
+    Student{documents} to Document{student}
+    ClassMeeting{comments} to Comment
+    Group{students} to Student{group(name)}
+    Student to Assistance{student}
+    Institute to Assistance{institute}
+    ClassMeeting to Assistance{classMeeting}
+    Group to Assistance{group(name)}
+    Group{users} to ExtendedUser{group(name)}
+    ExtendedUser to Contact{user(login)}
+    ExtendedUser{addresses} to Address{user}
+    Student{addresses} to Address{student}
+}
+
+relationship OneToOne {
+	ExtendedUser{user} to User
+}
+
+
+paginate all with pagination
+service all with serviceImpl

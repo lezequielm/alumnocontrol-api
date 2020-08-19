@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.softstonesolutions.alumnocontrol"
+    },
+    "jhipsterVersion": "6.10.1",
+    "applicationType": "monolith",
+    "baseName": "alumnocontrol",
+    "packageName": "com.softstonesolutions.alumnocontrol",
+    "packageFolder": "com/softstonesolutions/alumnocontrol",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "YmU3YTAzZWRkYWIxYjI4YmYyN2M5Y2I5MTZiODEwMzE0ZGY4ZWY1YWZjNDVlOGVlMjVlOTU3NTY2N2YwZGI2NTk5OTVjODA1MDM4OTI1OTA1OTQ5NmY3YTE2NWE0MTI2MWNjMmYyMDAzMzQxNjQ4MGQ4YTE0ZTZjZmU2MDI2NzI=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "react",
+    "clientTheme": "sketchy",
+    "clientThemeVariant": "primary",
+    "creationTimestamp": 1597873588306,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}

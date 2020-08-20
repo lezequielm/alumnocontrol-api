@@ -95,4 +95,5 @@ relationship OneToOne {
 
 
 paginate all with pagination
-service all with serviceImpl
+service all with serviceClass
+filter all

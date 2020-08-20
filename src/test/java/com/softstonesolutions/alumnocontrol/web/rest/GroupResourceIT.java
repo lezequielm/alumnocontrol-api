@@ -2,8 +2,15 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 
 import com.softstonesolutions.alumnocontrol.AlumnocontrolApp;
 import com.softstonesolutions.alumnocontrol.domain.Group;
+import com.softstonesolutions.alumnocontrol.domain.Document;
+import com.softstonesolutions.alumnocontrol.domain.Student;
+import com.softstonesolutions.alumnocontrol.domain.Assistance;
+import com.softstonesolutions.alumnocontrol.domain.ExtendedUser;
+import com.softstonesolutions.alumnocontrol.domain.Institute;
 import com.softstonesolutions.alumnocontrol.repository.GroupRepository;
 import com.softstonesolutions.alumnocontrol.service.GroupService;
+import com.softstonesolutions.alumnocontrol.service.dto.GroupCriteria;
+import com.softstonesolutions.alumnocontrol.service.GroupQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +48,9 @@ public class GroupResourceIT {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private GroupQueryService groupQueryService;
 
     @Autowired
     private EntityManager em;
@@ -185,6 +195,291 @@ public class GroupResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.enabled").value(DEFAULT_ENABLED.booleanValue()));
     }
+
+
+    @Test
+    @Transactional
+    public void getGroupsByIdFiltering() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        Long id = group.getId();
+
+        defaultGroupShouldBeFound("id.equals=" + id);
+        defaultGroupShouldNotBeFound("id.notEquals=" + id);
+
+        defaultGroupShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultGroupShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultGroupShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultGroupShouldNotBeFound("id.lessThan=" + id);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name equals to DEFAULT_NAME
+        defaultGroupShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the groupList where name equals to UPDATED_NAME
+        defaultGroupShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByNameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name not equals to DEFAULT_NAME
+        defaultGroupShouldNotBeFound("name.notEquals=" + DEFAULT_NAME);
+
+        // Get all the groupList where name not equals to UPDATED_NAME
+        defaultGroupShouldBeFound("name.notEquals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultGroupShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the groupList where name equals to UPDATED_NAME
+        defaultGroupShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name is not null
+        defaultGroupShouldBeFound("name.specified=true");
+
+        // Get all the groupList where name is null
+        defaultGroupShouldNotBeFound("name.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllGroupsByNameContainsSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name contains DEFAULT_NAME
+        defaultGroupShouldBeFound("name.contains=" + DEFAULT_NAME);
+
+        // Get all the groupList where name contains UPDATED_NAME
+        defaultGroupShouldNotBeFound("name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where name does not contain DEFAULT_NAME
+        defaultGroupShouldNotBeFound("name.doesNotContain=" + DEFAULT_NAME);
+
+        // Get all the groupList where name does not contain UPDATED_NAME
+        defaultGroupShouldBeFound("name.doesNotContain=" + UPDATED_NAME);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByEnabledIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where enabled equals to DEFAULT_ENABLED
+        defaultGroupShouldBeFound("enabled.equals=" + DEFAULT_ENABLED);
+
+        // Get all the groupList where enabled equals to UPDATED_ENABLED
+        defaultGroupShouldNotBeFound("enabled.equals=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByEnabledIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where enabled not equals to DEFAULT_ENABLED
+        defaultGroupShouldNotBeFound("enabled.notEquals=" + DEFAULT_ENABLED);
+
+        // Get all the groupList where enabled not equals to UPDATED_ENABLED
+        defaultGroupShouldBeFound("enabled.notEquals=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByEnabledIsInShouldWork() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where enabled in DEFAULT_ENABLED or UPDATED_ENABLED
+        defaultGroupShouldBeFound("enabled.in=" + DEFAULT_ENABLED + "," + UPDATED_ENABLED);
+
+        // Get all the groupList where enabled equals to UPDATED_ENABLED
+        defaultGroupShouldNotBeFound("enabled.in=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByEnabledIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+
+        // Get all the groupList where enabled is not null
+        defaultGroupShouldBeFound("enabled.specified=true");
+
+        // Get all the groupList where enabled is null
+        defaultGroupShouldNotBeFound("enabled.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllGroupsByRequestedDocumentsIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+        Document requestedDocuments = DocumentResourceIT.createEntity(em);
+        em.persist(requestedDocuments);
+        em.flush();
+        group.addRequestedDocuments(requestedDocuments);
+        groupRepository.saveAndFlush(group);
+        Long requestedDocumentsId = requestedDocuments.getId();
+
+        // Get all the groupList where requestedDocuments equals to requestedDocumentsId
+        defaultGroupShouldBeFound("requestedDocumentsId.equals=" + requestedDocumentsId);
+
+        // Get all the groupList where requestedDocuments equals to requestedDocumentsId + 1
+        defaultGroupShouldNotBeFound("requestedDocumentsId.equals=" + (requestedDocumentsId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByStudentsIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+        Student students = StudentResourceIT.createEntity(em);
+        em.persist(students);
+        em.flush();
+        group.addStudents(students);
+        groupRepository.saveAndFlush(group);
+        Long studentsId = students.getId();
+
+        // Get all the groupList where students equals to studentsId
+        defaultGroupShouldBeFound("studentsId.equals=" + studentsId);
+
+        // Get all the groupList where students equals to studentsId + 1
+        defaultGroupShouldNotBeFound("studentsId.equals=" + (studentsId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByAssistanceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+        Assistance assistance = AssistanceResourceIT.createEntity(em);
+        em.persist(assistance);
+        em.flush();
+        group.addAssistance(assistance);
+        groupRepository.saveAndFlush(group);
+        Long assistanceId = assistance.getId();
+
+        // Get all the groupList where assistance equals to assistanceId
+        defaultGroupShouldBeFound("assistanceId.equals=" + assistanceId);
+
+        // Get all the groupList where assistance equals to assistanceId + 1
+        defaultGroupShouldNotBeFound("assistanceId.equals=" + (assistanceId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByUsersIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+        ExtendedUser users = ExtendedUserResourceIT.createEntity(em);
+        em.persist(users);
+        em.flush();
+        group.addUsers(users);
+        groupRepository.saveAndFlush(group);
+        Long usersId = users.getId();
+
+        // Get all the groupList where users equals to usersId
+        defaultGroupShouldBeFound("usersId.equals=" + usersId);
+
+        // Get all the groupList where users equals to usersId + 1
+        defaultGroupShouldNotBeFound("usersId.equals=" + (usersId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllGroupsByInstituteIsEqualToSomething() throws Exception {
+        // Initialize the database
+        groupRepository.saveAndFlush(group);
+        Institute institute = InstituteResourceIT.createEntity(em);
+        em.persist(institute);
+        em.flush();
+        group.setInstitute(institute);
+        groupRepository.saveAndFlush(group);
+        Long instituteId = institute.getId();
+
+        // Get all the groupList where institute equals to instituteId
+        defaultGroupShouldBeFound("instituteId.equals=" + instituteId);
+
+        // Get all the groupList where institute equals to instituteId + 1
+        defaultGroupShouldNotBeFound("instituteId.equals=" + (instituteId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultGroupShouldBeFound(String filter) throws Exception {
+        restGroupMockMvc.perform(get("/api/groups?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(group.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())));
+
+        // Check, that the count call also returns 1
+        restGroupMockMvc.perform(get("/api/groups/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultGroupShouldNotBeFound(String filter) throws Exception {
+        restGroupMockMvc.perform(get("/api/groups?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restGroupMockMvc.perform(get("/api/groups/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
+    }
+
     @Test
     @Transactional
     public void getNonExistingGroup() throws Exception {

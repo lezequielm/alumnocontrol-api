@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ClassMeetingRepository extends JpaRepository<ClassMeeting, Long> {
+public interface ClassMeetingRepository extends JpaRepository<ClassMeeting, Long>, JpaSpecificationExecutor<ClassMeeting> {
 }

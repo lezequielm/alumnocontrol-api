@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Address;
 import com.softstonesolutions.alumnocontrol.service.AddressService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.AddressCriteria;
+import com.softstonesolutions.alumnocontrol.service.AddressQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class AddressResource {
 
     private final AddressService addressService;
 
-    public AddressResource(AddressService addressService) {
+    private final AddressQueryService addressQueryService;
+
+    public AddressResource(AddressService addressService, AddressQueryService addressQueryService) {
         this.addressService = addressService;
+        this.addressQueryService = addressQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class AddressResource {
      * {@code GET  /addresses} : get all the addresses.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of addresses in body.
      */
     @GetMapping("/addresses")
-    public ResponseEntity<List<Address>> getAllAddresses(Pageable pageable) {
-        log.debug("REST request to get a page of Addresses");
-        Page<Address> page = addressService.findAll(pageable);
+    public ResponseEntity<List<Address>> getAllAddresses(AddressCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Addresses by criteria: {}", criteria);
+        Page<Address> page = addressQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /addresses/count} : count all the addresses.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/addresses/count")
+    public ResponseEntity<Long> countAddresses(AddressCriteria criteria) {
+        log.debug("REST request to count Addresses by criteria: {}", criteria);
+        return ResponseEntity.ok().body(addressQueryService.countByCriteria(criteria));
     }
 
     /**

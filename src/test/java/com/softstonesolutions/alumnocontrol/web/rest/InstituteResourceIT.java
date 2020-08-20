@@ -2,8 +2,14 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 
 import com.softstonesolutions.alumnocontrol.AlumnocontrolApp;
 import com.softstonesolutions.alumnocontrol.domain.Institute;
+import com.softstonesolutions.alumnocontrol.domain.ExtendedUser;
+import com.softstonesolutions.alumnocontrol.domain.Student;
+import com.softstonesolutions.alumnocontrol.domain.Group;
+import com.softstonesolutions.alumnocontrol.domain.Assistance;
 import com.softstonesolutions.alumnocontrol.repository.InstituteRepository;
 import com.softstonesolutions.alumnocontrol.service.InstituteService;
+import com.softstonesolutions.alumnocontrol.service.dto.InstituteCriteria;
+import com.softstonesolutions.alumnocontrol.service.InstituteQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +47,9 @@ public class InstituteResourceIT {
 
     @Autowired
     private InstituteService instituteService;
+
+    @Autowired
+    private InstituteQueryService instituteQueryService;
 
     @Autowired
     private EntityManager em;
@@ -185,6 +194,271 @@ public class InstituteResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.enabled").value(DEFAULT_ENABLED.booleanValue()));
     }
+
+
+    @Test
+    @Transactional
+    public void getInstitutesByIdFiltering() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        Long id = institute.getId();
+
+        defaultInstituteShouldBeFound("id.equals=" + id);
+        defaultInstituteShouldNotBeFound("id.notEquals=" + id);
+
+        defaultInstituteShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultInstituteShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultInstituteShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultInstituteShouldNotBeFound("id.lessThan=" + id);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name equals to DEFAULT_NAME
+        defaultInstituteShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the instituteList where name equals to UPDATED_NAME
+        defaultInstituteShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByNameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name not equals to DEFAULT_NAME
+        defaultInstituteShouldNotBeFound("name.notEquals=" + DEFAULT_NAME);
+
+        // Get all the instituteList where name not equals to UPDATED_NAME
+        defaultInstituteShouldBeFound("name.notEquals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultInstituteShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the instituteList where name equals to UPDATED_NAME
+        defaultInstituteShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name is not null
+        defaultInstituteShouldBeFound("name.specified=true");
+
+        // Get all the instituteList where name is null
+        defaultInstituteShouldNotBeFound("name.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllInstitutesByNameContainsSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name contains DEFAULT_NAME
+        defaultInstituteShouldBeFound("name.contains=" + DEFAULT_NAME);
+
+        // Get all the instituteList where name contains UPDATED_NAME
+        defaultInstituteShouldNotBeFound("name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where name does not contain DEFAULT_NAME
+        defaultInstituteShouldNotBeFound("name.doesNotContain=" + DEFAULT_NAME);
+
+        // Get all the instituteList where name does not contain UPDATED_NAME
+        defaultInstituteShouldBeFound("name.doesNotContain=" + UPDATED_NAME);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByEnabledIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where enabled equals to DEFAULT_ENABLED
+        defaultInstituteShouldBeFound("enabled.equals=" + DEFAULT_ENABLED);
+
+        // Get all the instituteList where enabled equals to UPDATED_ENABLED
+        defaultInstituteShouldNotBeFound("enabled.equals=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByEnabledIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where enabled not equals to DEFAULT_ENABLED
+        defaultInstituteShouldNotBeFound("enabled.notEquals=" + DEFAULT_ENABLED);
+
+        // Get all the instituteList where enabled not equals to UPDATED_ENABLED
+        defaultInstituteShouldBeFound("enabled.notEquals=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByEnabledIsInShouldWork() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where enabled in DEFAULT_ENABLED or UPDATED_ENABLED
+        defaultInstituteShouldBeFound("enabled.in=" + DEFAULT_ENABLED + "," + UPDATED_ENABLED);
+
+        // Get all the instituteList where enabled equals to UPDATED_ENABLED
+        defaultInstituteShouldNotBeFound("enabled.in=" + UPDATED_ENABLED);
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByEnabledIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+
+        // Get all the instituteList where enabled is not null
+        defaultInstituteShouldBeFound("enabled.specified=true");
+
+        // Get all the instituteList where enabled is null
+        defaultInstituteShouldNotBeFound("enabled.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByUsersIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+        ExtendedUser users = ExtendedUserResourceIT.createEntity(em);
+        em.persist(users);
+        em.flush();
+        institute.addUsers(users);
+        instituteRepository.saveAndFlush(institute);
+        Long usersId = users.getId();
+
+        // Get all the instituteList where users equals to usersId
+        defaultInstituteShouldBeFound("usersId.equals=" + usersId);
+
+        // Get all the instituteList where users equals to usersId + 1
+        defaultInstituteShouldNotBeFound("usersId.equals=" + (usersId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByStudentsIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+        Student students = StudentResourceIT.createEntity(em);
+        em.persist(students);
+        em.flush();
+        institute.addStudents(students);
+        instituteRepository.saveAndFlush(institute);
+        Long studentsId = students.getId();
+
+        // Get all the instituteList where students equals to studentsId
+        defaultInstituteShouldBeFound("studentsId.equals=" + studentsId);
+
+        // Get all the instituteList where students equals to studentsId + 1
+        defaultInstituteShouldNotBeFound("studentsId.equals=" + (studentsId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByGroupsIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+        Group groups = GroupResourceIT.createEntity(em);
+        em.persist(groups);
+        em.flush();
+        institute.addGroups(groups);
+        instituteRepository.saveAndFlush(institute);
+        Long groupsId = groups.getId();
+
+        // Get all the instituteList where groups equals to groupsId
+        defaultInstituteShouldBeFound("groupsId.equals=" + groupsId);
+
+        // Get all the instituteList where groups equals to groupsId + 1
+        defaultInstituteShouldNotBeFound("groupsId.equals=" + (groupsId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllInstitutesByAssistanceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        instituteRepository.saveAndFlush(institute);
+        Assistance assistance = AssistanceResourceIT.createEntity(em);
+        em.persist(assistance);
+        em.flush();
+        institute.addAssistance(assistance);
+        instituteRepository.saveAndFlush(institute);
+        Long assistanceId = assistance.getId();
+
+        // Get all the instituteList where assistance equals to assistanceId
+        defaultInstituteShouldBeFound("assistanceId.equals=" + assistanceId);
+
+        // Get all the instituteList where assistance equals to assistanceId + 1
+        defaultInstituteShouldNotBeFound("assistanceId.equals=" + (assistanceId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultInstituteShouldBeFound(String filter) throws Exception {
+        restInstituteMockMvc.perform(get("/api/institutes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(institute.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())));
+
+        // Check, that the count call also returns 1
+        restInstituteMockMvc.perform(get("/api/institutes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultInstituteShouldNotBeFound(String filter) throws Exception {
+        restInstituteMockMvc.perform(get("/api/institutes?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restInstituteMockMvc.perform(get("/api/institutes/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
+    }
+
     @Test
     @Transactional
     public void getNonExistingInstitute() throws Exception {

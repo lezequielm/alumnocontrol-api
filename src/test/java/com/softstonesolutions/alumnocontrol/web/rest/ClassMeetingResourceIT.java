@@ -2,8 +2,12 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 
 import com.softstonesolutions.alumnocontrol.AlumnocontrolApp;
 import com.softstonesolutions.alumnocontrol.domain.ClassMeeting;
+import com.softstonesolutions.alumnocontrol.domain.Comment;
+import com.softstonesolutions.alumnocontrol.domain.Assistance;
 import com.softstonesolutions.alumnocontrol.repository.ClassMeetingRepository;
 import com.softstonesolutions.alumnocontrol.service.ClassMeetingService;
+import com.softstonesolutions.alumnocontrol.service.dto.ClassMeetingCriteria;
+import com.softstonesolutions.alumnocontrol.service.ClassMeetingQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,12 +48,16 @@ public class ClassMeetingResourceIT {
 
     private static final ZonedDateTime DEFAULT_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final ZonedDateTime SMALLER_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(-1L), ZoneOffset.UTC);
 
     @Autowired
     private ClassMeetingRepository classMeetingRepository;
 
     @Autowired
     private ClassMeetingService classMeetingService;
+
+    @Autowired
+    private ClassMeetingQueryService classMeetingQueryService;
 
     @Autowired
     private EntityManager em;
@@ -199,6 +207,337 @@ public class ClassMeetingResourceIT {
             .andExpect(jsonPath("$.classType").value(DEFAULT_CLASS_TYPE.toString()))
             .andExpect(jsonPath("$.date").value(sameInstant(DEFAULT_DATE)));
     }
+
+
+    @Test
+    @Transactional
+    public void getClassMeetingsByIdFiltering() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        Long id = classMeeting.getId();
+
+        defaultClassMeetingShouldBeFound("id.equals=" + id);
+        defaultClassMeetingShouldNotBeFound("id.notEquals=" + id);
+
+        defaultClassMeetingShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultClassMeetingShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultClassMeetingShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultClassMeetingShouldNotBeFound("id.lessThan=" + id);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name equals to DEFAULT_NAME
+        defaultClassMeetingShouldBeFound("name.equals=" + DEFAULT_NAME);
+
+        // Get all the classMeetingList where name equals to UPDATED_NAME
+        defaultClassMeetingShouldNotBeFound("name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByNameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name not equals to DEFAULT_NAME
+        defaultClassMeetingShouldNotBeFound("name.notEquals=" + DEFAULT_NAME);
+
+        // Get all the classMeetingList where name not equals to UPDATED_NAME
+        defaultClassMeetingShouldBeFound("name.notEquals=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name in DEFAULT_NAME or UPDATED_NAME
+        defaultClassMeetingShouldBeFound("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME);
+
+        // Get all the classMeetingList where name equals to UPDATED_NAME
+        defaultClassMeetingShouldNotBeFound("name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name is not null
+        defaultClassMeetingShouldBeFound("name.specified=true");
+
+        // Get all the classMeetingList where name is null
+        defaultClassMeetingShouldNotBeFound("name.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllClassMeetingsByNameContainsSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name contains DEFAULT_NAME
+        defaultClassMeetingShouldBeFound("name.contains=" + DEFAULT_NAME);
+
+        // Get all the classMeetingList where name contains UPDATED_NAME
+        defaultClassMeetingShouldNotBeFound("name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByNameNotContainsSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where name does not contain DEFAULT_NAME
+        defaultClassMeetingShouldNotBeFound("name.doesNotContain=" + DEFAULT_NAME);
+
+        // Get all the classMeetingList where name does not contain UPDATED_NAME
+        defaultClassMeetingShouldBeFound("name.doesNotContain=" + UPDATED_NAME);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByClassTypeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where classType equals to DEFAULT_CLASS_TYPE
+        defaultClassMeetingShouldBeFound("classType.equals=" + DEFAULT_CLASS_TYPE);
+
+        // Get all the classMeetingList where classType equals to UPDATED_CLASS_TYPE
+        defaultClassMeetingShouldNotBeFound("classType.equals=" + UPDATED_CLASS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByClassTypeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where classType not equals to DEFAULT_CLASS_TYPE
+        defaultClassMeetingShouldNotBeFound("classType.notEquals=" + DEFAULT_CLASS_TYPE);
+
+        // Get all the classMeetingList where classType not equals to UPDATED_CLASS_TYPE
+        defaultClassMeetingShouldBeFound("classType.notEquals=" + UPDATED_CLASS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByClassTypeIsInShouldWork() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where classType in DEFAULT_CLASS_TYPE or UPDATED_CLASS_TYPE
+        defaultClassMeetingShouldBeFound("classType.in=" + DEFAULT_CLASS_TYPE + "," + UPDATED_CLASS_TYPE);
+
+        // Get all the classMeetingList where classType equals to UPDATED_CLASS_TYPE
+        defaultClassMeetingShouldNotBeFound("classType.in=" + UPDATED_CLASS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByClassTypeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where classType is not null
+        defaultClassMeetingShouldBeFound("classType.specified=true");
+
+        // Get all the classMeetingList where classType is null
+        defaultClassMeetingShouldNotBeFound("classType.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date equals to DEFAULT_DATE
+        defaultClassMeetingShouldBeFound("date.equals=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date equals to UPDATED_DATE
+        defaultClassMeetingShouldNotBeFound("date.equals=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date not equals to DEFAULT_DATE
+        defaultClassMeetingShouldNotBeFound("date.notEquals=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date not equals to UPDATED_DATE
+        defaultClassMeetingShouldBeFound("date.notEquals=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date in DEFAULT_DATE or UPDATED_DATE
+        defaultClassMeetingShouldBeFound("date.in=" + DEFAULT_DATE + "," + UPDATED_DATE);
+
+        // Get all the classMeetingList where date equals to UPDATED_DATE
+        defaultClassMeetingShouldNotBeFound("date.in=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date is not null
+        defaultClassMeetingShouldBeFound("date.specified=true");
+
+        // Get all the classMeetingList where date is null
+        defaultClassMeetingShouldNotBeFound("date.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date is greater than or equal to DEFAULT_DATE
+        defaultClassMeetingShouldBeFound("date.greaterThanOrEqual=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date is greater than or equal to UPDATED_DATE
+        defaultClassMeetingShouldNotBeFound("date.greaterThanOrEqual=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date is less than or equal to DEFAULT_DATE
+        defaultClassMeetingShouldBeFound("date.lessThanOrEqual=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date is less than or equal to SMALLER_DATE
+        defaultClassMeetingShouldNotBeFound("date.lessThanOrEqual=" + SMALLER_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsLessThanSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date is less than DEFAULT_DATE
+        defaultClassMeetingShouldNotBeFound("date.lessThan=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date is less than UPDATED_DATE
+        defaultClassMeetingShouldBeFound("date.lessThan=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByDateIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+
+        // Get all the classMeetingList where date is greater than DEFAULT_DATE
+        defaultClassMeetingShouldNotBeFound("date.greaterThan=" + DEFAULT_DATE);
+
+        // Get all the classMeetingList where date is greater than SMALLER_DATE
+        defaultClassMeetingShouldBeFound("date.greaterThan=" + SMALLER_DATE);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByCommentsIsEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+        Comment comments = CommentResourceIT.createEntity(em);
+        em.persist(comments);
+        em.flush();
+        classMeeting.addComments(comments);
+        classMeetingRepository.saveAndFlush(classMeeting);
+        Long commentsId = comments.getId();
+
+        // Get all the classMeetingList where comments equals to commentsId
+        defaultClassMeetingShouldBeFound("commentsId.equals=" + commentsId);
+
+        // Get all the classMeetingList where comments equals to commentsId + 1
+        defaultClassMeetingShouldNotBeFound("commentsId.equals=" + (commentsId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllClassMeetingsByAssistanceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        classMeetingRepository.saveAndFlush(classMeeting);
+        Assistance assistance = AssistanceResourceIT.createEntity(em);
+        em.persist(assistance);
+        em.flush();
+        classMeeting.addAssistance(assistance);
+        classMeetingRepository.saveAndFlush(classMeeting);
+        Long assistanceId = assistance.getId();
+
+        // Get all the classMeetingList where assistance equals to assistanceId
+        defaultClassMeetingShouldBeFound("assistanceId.equals=" + assistanceId);
+
+        // Get all the classMeetingList where assistance equals to assistanceId + 1
+        defaultClassMeetingShouldNotBeFound("assistanceId.equals=" + (assistanceId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultClassMeetingShouldBeFound(String filter) throws Exception {
+        restClassMeetingMockMvc.perform(get("/api/class-meetings?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(classMeeting.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].classType").value(hasItem(DEFAULT_CLASS_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(sameInstant(DEFAULT_DATE))));
+
+        // Check, that the count call also returns 1
+        restClassMeetingMockMvc.perform(get("/api/class-meetings/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultClassMeetingShouldNotBeFound(String filter) throws Exception {
+        restClassMeetingMockMvc.perform(get("/api/class-meetings?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restClassMeetingMockMvc.perform(get("/api/class-meetings/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
+    }
+
     @Test
     @Transactional
     public void getNonExistingClassMeeting() throws Exception {

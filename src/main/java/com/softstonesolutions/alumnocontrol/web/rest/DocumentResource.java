@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Document;
 import com.softstonesolutions.alumnocontrol.service.DocumentService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.DocumentCriteria;
+import com.softstonesolutions.alumnocontrol.service.DocumentQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class DocumentResource {
 
     private final DocumentService documentService;
 
-    public DocumentResource(DocumentService documentService) {
+    private final DocumentQueryService documentQueryService;
+
+    public DocumentResource(DocumentService documentService, DocumentQueryService documentQueryService) {
         this.documentService = documentService;
+        this.documentQueryService = documentQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class DocumentResource {
      * {@code GET  /documents} : get all the documents.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of documents in body.
      */
     @GetMapping("/documents")
-    public ResponseEntity<List<Document>> getAllDocuments(Pageable pageable) {
-        log.debug("REST request to get a page of Documents");
-        Page<Document> page = documentService.findAll(pageable);
+    public ResponseEntity<List<Document>> getAllDocuments(DocumentCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Documents by criteria: {}", criteria);
+        Page<Document> page = documentQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /documents/count} : count all the documents.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/documents/count")
+    public ResponseEntity<Long> countDocuments(DocumentCriteria criteria) {
+        log.debug("REST request to count Documents by criteria: {}", criteria);
+        return ResponseEntity.ok().body(documentQueryService.countByCriteria(criteria));
     }
 
     /**

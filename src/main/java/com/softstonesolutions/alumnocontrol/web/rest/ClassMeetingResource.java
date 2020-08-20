@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.ClassMeeting;
 import com.softstonesolutions.alumnocontrol.service.ClassMeetingService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.ClassMeetingCriteria;
+import com.softstonesolutions.alumnocontrol.service.ClassMeetingQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class ClassMeetingResource {
 
     private final ClassMeetingService classMeetingService;
 
-    public ClassMeetingResource(ClassMeetingService classMeetingService) {
+    private final ClassMeetingQueryService classMeetingQueryService;
+
+    public ClassMeetingResource(ClassMeetingService classMeetingService, ClassMeetingQueryService classMeetingQueryService) {
         this.classMeetingService = classMeetingService;
+        this.classMeetingQueryService = classMeetingQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class ClassMeetingResource {
      * {@code GET  /class-meetings} : get all the classMeetings.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of classMeetings in body.
      */
     @GetMapping("/class-meetings")
-    public ResponseEntity<List<ClassMeeting>> getAllClassMeetings(Pageable pageable) {
-        log.debug("REST request to get a page of ClassMeetings");
-        Page<ClassMeeting> page = classMeetingService.findAll(pageable);
+    public ResponseEntity<List<ClassMeeting>> getAllClassMeetings(ClassMeetingCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get ClassMeetings by criteria: {}", criteria);
+        Page<ClassMeeting> page = classMeetingQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /class-meetings/count} : count all the classMeetings.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/class-meetings/count")
+    public ResponseEntity<Long> countClassMeetings(ClassMeetingCriteria criteria) {
+        log.debug("REST request to count ClassMeetings by criteria: {}", criteria);
+        return ResponseEntity.ok().body(classMeetingQueryService.countByCriteria(criteria));
     }
 
     /**

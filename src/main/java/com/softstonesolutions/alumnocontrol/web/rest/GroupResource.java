@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Group;
 import com.softstonesolutions.alumnocontrol.service.GroupService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.GroupCriteria;
+import com.softstonesolutions.alumnocontrol.service.GroupQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class GroupResource {
 
     private final GroupService groupService;
 
-    public GroupResource(GroupService groupService) {
+    private final GroupQueryService groupQueryService;
+
+    public GroupResource(GroupService groupService, GroupQueryService groupQueryService) {
         this.groupService = groupService;
+        this.groupQueryService = groupQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class GroupResource {
      * {@code GET  /groups} : get all the groups.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of groups in body.
      */
     @GetMapping("/groups")
-    public ResponseEntity<List<Group>> getAllGroups(Pageable pageable) {
-        log.debug("REST request to get a page of Groups");
-        Page<Group> page = groupService.findAll(pageable);
+    public ResponseEntity<List<Group>> getAllGroups(GroupCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Groups by criteria: {}", criteria);
+        Page<Group> page = groupQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /groups/count} : count all the groups.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/groups/count")
+    public ResponseEntity<Long> countGroups(GroupCriteria criteria) {
+        log.debug("REST request to count Groups by criteria: {}", criteria);
+        return ResponseEntity.ok().body(groupQueryService.countByCriteria(criteria));
     }
 
     /**

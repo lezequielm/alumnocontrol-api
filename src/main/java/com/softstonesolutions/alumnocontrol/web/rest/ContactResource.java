@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Contact;
 import com.softstonesolutions.alumnocontrol.service.ContactService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.ContactCriteria;
+import com.softstonesolutions.alumnocontrol.service.ContactQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class ContactResource {
 
     private final ContactService contactService;
 
-    public ContactResource(ContactService contactService) {
+    private final ContactQueryService contactQueryService;
+
+    public ContactResource(ContactService contactService, ContactQueryService contactQueryService) {
         this.contactService = contactService;
+        this.contactQueryService = contactQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class ContactResource {
      * {@code GET  /contacts} : get all the contacts.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of contacts in body.
      */
     @GetMapping("/contacts")
-    public ResponseEntity<List<Contact>> getAllContacts(Pageable pageable) {
-        log.debug("REST request to get a page of Contacts");
-        Page<Contact> page = contactService.findAll(pageable);
+    public ResponseEntity<List<Contact>> getAllContacts(ContactCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Contacts by criteria: {}", criteria);
+        Page<Contact> page = contactQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /contacts/count} : count all the contacts.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/contacts/count")
+    public ResponseEntity<Long> countContacts(ContactCriteria criteria) {
+        log.debug("REST request to count Contacts by criteria: {}", criteria);
+        return ResponseEntity.ok().body(contactQueryService.countByCriteria(criteria));
     }
 
     /**

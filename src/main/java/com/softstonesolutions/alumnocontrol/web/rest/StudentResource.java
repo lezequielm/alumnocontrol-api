@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Student;
 import com.softstonesolutions.alumnocontrol.service.StudentService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.StudentCriteria;
+import com.softstonesolutions.alumnocontrol.service.StudentQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class StudentResource {
 
     private final StudentService studentService;
 
-    public StudentResource(StudentService studentService) {
+    private final StudentQueryService studentQueryService;
+
+    public StudentResource(StudentService studentService, StudentQueryService studentQueryService) {
         this.studentService = studentService;
+        this.studentQueryService = studentQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class StudentResource {
      * {@code GET  /students} : get all the students.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of students in body.
      */
     @GetMapping("/students")
-    public ResponseEntity<List<Student>> getAllStudents(Pageable pageable) {
-        log.debug("REST request to get a page of Students");
-        Page<Student> page = studentService.findAll(pageable);
+    public ResponseEntity<List<Student>> getAllStudents(StudentCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Students by criteria: {}", criteria);
+        Page<Student> page = studentQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /students/count} : count all the students.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/students/count")
+    public ResponseEntity<Long> countStudents(StudentCriteria criteria) {
+        log.debug("REST request to count Students by criteria: {}", criteria);
+        return ResponseEntity.ok().body(studentQueryService.countByCriteria(criteria));
     }
 
     /**

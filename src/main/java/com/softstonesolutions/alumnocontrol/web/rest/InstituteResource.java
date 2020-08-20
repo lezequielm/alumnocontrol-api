@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Institute;
 import com.softstonesolutions.alumnocontrol.service.InstituteService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.InstituteCriteria;
+import com.softstonesolutions.alumnocontrol.service.InstituteQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class InstituteResource {
 
     private final InstituteService instituteService;
 
-    public InstituteResource(InstituteService instituteService) {
+    private final InstituteQueryService instituteQueryService;
+
+    public InstituteResource(InstituteService instituteService, InstituteQueryService instituteQueryService) {
         this.instituteService = instituteService;
+        this.instituteQueryService = instituteQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class InstituteResource {
      * {@code GET  /institutes} : get all the institutes.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of institutes in body.
      */
     @GetMapping("/institutes")
-    public ResponseEntity<List<Institute>> getAllInstitutes(Pageable pageable) {
-        log.debug("REST request to get a page of Institutes");
-        Page<Institute> page = instituteService.findAll(pageable);
+    public ResponseEntity<List<Institute>> getAllInstitutes(InstituteCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Institutes by criteria: {}", criteria);
+        Page<Institute> page = instituteQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /institutes/count} : count all the institutes.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/institutes/count")
+    public ResponseEntity<Long> countInstitutes(InstituteCriteria criteria) {
+        log.debug("REST request to count Institutes by criteria: {}", criteria);
+        return ResponseEntity.ok().body(instituteQueryService.countByCriteria(criteria));
     }
 
     /**

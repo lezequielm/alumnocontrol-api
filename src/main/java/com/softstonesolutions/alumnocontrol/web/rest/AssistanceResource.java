@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Assistance;
 import com.softstonesolutions.alumnocontrol.service.AssistanceService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.AssistanceCriteria;
+import com.softstonesolutions.alumnocontrol.service.AssistanceQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -40,8 +42,11 @@ public class AssistanceResource {
 
     private final AssistanceService assistanceService;
 
-    public AssistanceResource(AssistanceService assistanceService) {
+    private final AssistanceQueryService assistanceQueryService;
+
+    public AssistanceResource(AssistanceService assistanceService, AssistanceQueryService assistanceQueryService) {
         this.assistanceService = assistanceService;
+        this.assistanceQueryService = assistanceQueryService;
     }
 
     /**
@@ -88,14 +93,27 @@ public class AssistanceResource {
      * {@code GET  /assistances} : get all the assistances.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of assistances in body.
      */
     @GetMapping("/assistances")
-    public ResponseEntity<List<Assistance>> getAllAssistances(Pageable pageable) {
-        log.debug("REST request to get a page of Assistances");
-        Page<Assistance> page = assistanceService.findAll(pageable);
+    public ResponseEntity<List<Assistance>> getAllAssistances(AssistanceCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Assistances by criteria: {}", criteria);
+        Page<Assistance> page = assistanceQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /assistances/count} : count all the assistances.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/assistances/count")
+    public ResponseEntity<Long> countAssistances(AssistanceCriteria criteria) {
+        log.debug("REST request to count Assistances by criteria: {}", criteria);
+        return ResponseEntity.ok().body(assistanceQueryService.countByCriteria(criteria));
     }
 
     /**

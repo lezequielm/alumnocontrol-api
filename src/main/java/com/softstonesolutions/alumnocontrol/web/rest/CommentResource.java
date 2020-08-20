@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.Comment;
 import com.softstonesolutions.alumnocontrol.service.CommentService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.CommentCriteria;
+import com.softstonesolutions.alumnocontrol.service.CommentQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -39,8 +41,11 @@ public class CommentResource {
 
     private final CommentService commentService;
 
-    public CommentResource(CommentService commentService) {
+    private final CommentQueryService commentQueryService;
+
+    public CommentResource(CommentService commentService, CommentQueryService commentQueryService) {
         this.commentService = commentService;
+        this.commentQueryService = commentQueryService;
     }
 
     /**
@@ -87,14 +92,27 @@ public class CommentResource {
      * {@code GET  /comments} : get all the comments.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of comments in body.
      */
     @GetMapping("/comments")
-    public ResponseEntity<List<Comment>> getAllComments(Pageable pageable) {
-        log.debug("REST request to get a page of Comments");
-        Page<Comment> page = commentService.findAll(pageable);
+    public ResponseEntity<List<Comment>> getAllComments(CommentCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Comments by criteria: {}", criteria);
+        Page<Comment> page = commentQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /comments/count} : count all the comments.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/comments/count")
+    public ResponseEntity<Long> countComments(CommentCriteria criteria) {
+        log.debug("REST request to count Comments by criteria: {}", criteria);
+        return ResponseEntity.ok().body(commentQueryService.countByCriteria(criteria));
     }
 
     /**

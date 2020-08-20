@@ -3,6 +3,8 @@ package com.softstonesolutions.alumnocontrol.web.rest;
 import com.softstonesolutions.alumnocontrol.domain.ExtendedUser;
 import com.softstonesolutions.alumnocontrol.service.ExtendedUserService;
 import com.softstonesolutions.alumnocontrol.web.rest.errors.BadRequestAlertException;
+import com.softstonesolutions.alumnocontrol.service.dto.ExtendedUserCriteria;
+import com.softstonesolutions.alumnocontrol.service.ExtendedUserQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -39,8 +41,11 @@ public class ExtendedUserResource {
 
     private final ExtendedUserService extendedUserService;
 
-    public ExtendedUserResource(ExtendedUserService extendedUserService) {
+    private final ExtendedUserQueryService extendedUserQueryService;
+
+    public ExtendedUserResource(ExtendedUserService extendedUserService, ExtendedUserQueryService extendedUserQueryService) {
         this.extendedUserService = extendedUserService;
+        this.extendedUserQueryService = extendedUserQueryService;
     }
 
     /**
@@ -87,14 +92,27 @@ public class ExtendedUserResource {
      * {@code GET  /extended-users} : get all the extendedUsers.
      *
      * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of extendedUsers in body.
      */
     @GetMapping("/extended-users")
-    public ResponseEntity<List<ExtendedUser>> getAllExtendedUsers(Pageable pageable) {
-        log.debug("REST request to get a page of ExtendedUsers");
-        Page<ExtendedUser> page = extendedUserService.findAll(pageable);
+    public ResponseEntity<List<ExtendedUser>> getAllExtendedUsers(ExtendedUserCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get ExtendedUsers by criteria: {}", criteria);
+        Page<ExtendedUser> page = extendedUserQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /extended-users/count} : count all the extendedUsers.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/extended-users/count")
+    public ResponseEntity<Long> countExtendedUsers(ExtendedUserCriteria criteria) {
+        log.debug("REST request to count ExtendedUsers by criteria: {}", criteria);
+        return ResponseEntity.ok().body(extendedUserQueryService.countByCriteria(criteria));
     }
 
     /**
